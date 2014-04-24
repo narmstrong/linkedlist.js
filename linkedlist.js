@@ -29,7 +29,8 @@ function Sentinel(next, prev) {
 // Node constructor
 function Node(data, next, prev) {
 
-  !arguments.length || data == null || data = {};
+  if(!arguments.length || data == null) 
+    data = {};
 
   this.data = data;
   Sentinel.prototype.constructor.apply(this, [next, prev]);
