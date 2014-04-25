@@ -29,11 +29,12 @@ function Sentinel(next, prev) {
 // Node constructor
 function Node(data, next, prev) {
 
-  if(!arguments.length || data == null) 
+  if(!arguments.length || data == null)
     data = {};
 
   this.data = data;
   Sentinel.prototype.constructor.apply(this, [next, prev]);
+  return this;
 }
 
 // List constructor
@@ -112,21 +113,24 @@ List.prototype = {
     return node;
   },
 
-  // Perform fn on every node in the list
+  // Perform fn on each nodes' data in the list
   // TODO ensure function is valid
   each : function(fn) {
     var node = this.sentinel;
-    while(node.next.hasOwnProperty('data'))
-      fn(node.next);
+    while(node.next.hasOwnProperty('data')) {
+      fn(node.next.data);
+      node = node.next;
+    }
   },
 
-  // Perform fn on every node in the list and return a new list of the results
+  // Perform fn on each node's data in the list and return a new list
   // TODO ensure function is valid
   map : function(fn) {
     var list = new List();
-    this.each(function(node){
-      list.push(fn(node));
+    this.each(function(data){
+      list.push(new Node(fn(data)));
     });
+    return list;
   },
 
   // Count the number of times data occurs in the list
@@ -139,14 +143,19 @@ List.prototype = {
     return count;
   },
 
-  // Append a second list to the end of the list and set the second to null
-  // TODO ensure list is valid
+  // Append a copy of a second list to the end of the list
   append : function(list) {
-    this.tail().next = list.head();
-    list.head().prev = this.tail();
-    list.tail().next = this.sentinel;
-    this.sentinel.prev = list.tail();
-    list = null;
+    if(!list || list.length == 0)
+      return this;
+
+    var newlist = list.map( function(data){ return data; });
+
+    this.tail().next = newlist.head();
+    newlist.head().prev = this.tail();
+    newlist.tail().next = this.sentinel;
+    this.sentinel.prev = newlist.tail();
+
+    this.length += list.length;
   }
 
 };
