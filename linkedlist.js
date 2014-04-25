@@ -10,7 +10,6 @@
 //   - isSupported
 //
 // List methods to consider adding:
-//   - isEmpty
 //   - Sort Ascending/Descending
 //   - Split
 //   - Move node in list
@@ -54,31 +53,27 @@ function Node(data, next, prev) {
   return this;
 }
 
-Node.prototype = {
+// Return the data parameter of the node
+Node.prototype.getdata = function() {
+  return this.data;
+};
 
-  // Return the data parameter of the node
-  data : function() {
-    return this.data;
-  },
+// Compare the data, next, and prev elements of two nodes
+Node.prototype.isequal = function(node) {
+  isValidNode(node);
+  return this.data == node.data &&
+         this.next == node.next &&
+         this.prev == node.prev;
+};
 
-  // Return the next parameter of the node
-  next : function() {
-    return this.next;
-  },
+// Return the next parameter of the node
+Node.prototype.getnext = function() {
+  return this.next;
+};
 
-  // Return the prev parameter of the node
-  prev : function() {
-    return this.prev;
-  },
-
-  // Compare the data, next, and prev elements of two nodes
-  isequal : function(node) {
-    isValidNode(node);
-    return this.data() == node.data() &&
-           this.next() == node.next() &&
-           this.prev() == node.prev();
-  }
-
+// Return the prev parameter of the node
+Node.prototype.getprev = function() {
+  return this.prev;
 };
 
 
@@ -95,15 +90,13 @@ function List() {
 List.prototype = {
 
   // Retrieve the first node in the list
-  // TODO ensure list is not empty
   head : function() {
-    return this.sentinel.next;
+    return this.isempty() ? null : this.sentinel.next;
   },
 
   // Retrieve the last node in the list
-  // TODO ensure list is not empty
   tail : function() {
-    return this.sentinel.prev;
+    return this.isempty() ? null : this.sentinel.prev;
   },
 
   // Retrieve the nth node in the list
@@ -125,7 +118,7 @@ List.prototype = {
   // Insert a new node after the given node
   // TODO insert by number or node
   insert : function(node, newnode) {
-    isValidNode(node);
+    isValidNode(node) && isValidNode(newnode);
     newnode.next = node.next;
     newnode.prev = node;
     node.next = node.next.prev = newnode;
@@ -140,20 +133,18 @@ List.prototype = {
     node.next.prev = node.prev;
     node.next = node.prev = node;
     --this.length;
+    return node;
   },
 
   // Add a node with the given data to the end of the list
   push : function(node) {
     isValidNode(node);
-    this.insert(this.tail(), node);
+    this.insert(this.tail() || this.sentinel, node);
   },
 
   // Remove and return the last node in the list
-  // TODO ensure the list is not empty
   pop : function() {
-    var node = this.tail();
-    delete(node);
-    return node;
+    return this.isempty() ? null : delete(this.tail());
   },
 
   // Perform fn on each nodes' data in the list
@@ -177,8 +168,8 @@ List.prototype = {
   },
 
   // Count the number of times data occurs in the list
-  // TODO ensure data is valid
   count : function(data) {
+    data = data || null;
     var count = 0;
     this.each(function(node){
       node.data == data && ++count;
@@ -189,7 +180,7 @@ List.prototype = {
   // Append a copy of a second list to the end of the list
   append : function(list) {
     isValidList(list);
-    if(!list || list.length == 0)
+    if(list.isempty())
       return this;
     var newlist = list.map( function(data){ return data; });
     this.tail().next = newlist.head();
@@ -197,6 +188,10 @@ List.prototype = {
     newlist.tail().next = this.sentinel;
     this.sentinel.prev = newlist.tail();
     this.length += list.length;
+  },
+
+  isempty: function() {
+    return this.length == 0;
   }
 
 };
@@ -210,24 +205,29 @@ List.prototype = {
 function isInRange(n) {
   if(!n || n <= 0 || n > this.length)
     throw TypeError;
+  return true;
 }
 
 // Check that node is a Node instance
 function isValidNode(node) {
   if( !(node instanceof Node) )
-    throw TypeError;
+     if( !(node instanceof Sentinel) )
+       throw TypeError;
+  return true;
 }
 
 // Check that list is a List instance
 function isValidList(list) {
   if( !(list instanceof List) )
     throw TypeError;
+  return true;
 }
 
 // Check that fn is a Function instance
 function isValidFunction(fn) {
   if( !(fn instanceof Function) )
     throw TypeError;
+  return true;
 }
 
 
