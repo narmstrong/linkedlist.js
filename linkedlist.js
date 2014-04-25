@@ -4,21 +4,35 @@
 // Author: Nick Armstrong
 // Version: 0.5
 //
-// Sources:
-// [1]: http://en.wikipedia.org/wiki/Linked_list
-// [2]:  http://stackoverflow.com/questions/5384358/how-does-a-sentinel-node-offer-benefits-over-null
+//--------------------------------------------------------------
 //
-// Functions to consider adding:
+// Node methods to consider adding:
+//   - isSupported
+//
+// List methods to consider adding:
+//   - isEmpty
 //   - Sort Ascending/Descending
 //   - Split
 //   - Move node in list
 //   - Shuffle merge
 //   - Shuffle list
+//
+// Validation functions to consider adding:
+//   - isValidData
+//
+// Miscellaneous changes to include in the future:
+//   - Print error details to console?
+//   - Allow list constructor to create a new list from an array of data
 
 
 var LinkedList = {
   version : 0.5
 }
+
+
+/***********************
+  Sentinel
+***********************/
 
 // Sentinel constructor
 function Sentinel(next, prev) {
@@ -26,9 +40,12 @@ function Sentinel(next, prev) {
   this.prev = prev || this;
 }
 
+
+/***********************
+  Node
+***********************/
+
 // Node constructor
-// TODO Add methods:
-//   -Issupported
 function Node(data, next, prev) {
   if(!arguments.length)
     data = null;
@@ -63,6 +80,11 @@ Node.prototype = {
   }
 
 };
+
+
+/***********************
+  List
+***********************/
 
 // List constructor
 function List() {
@@ -179,34 +201,44 @@ List.prototype = {
 
 };
 
-//TODO Validation functions:
-// -isValidData
-// -isInRange
 
+/***********************
+  Validation functions
+***********************/
+
+// Check that n is in the range 0<x<list.length - use call
 function isInRange(n) {
   if(!n || n <= 0 || n > this.length)
     throw TypeError;
 }
 
+// Check that node is a Node instance
 function isValidNode(node) {
   if( !(node instanceof Node) )
     throw TypeError;
 }
 
+// Check that list is a List instance
 function isValidList(list) {
   if( !(list instanceof List) )
     throw TypeError;
 }
 
+// Check that fn is a Function instance
 function isValidFunction(fn) {
-  if( !(fn instanceof Function) ) {
+  if( !(fn instanceof Function) )
     throw TypeError;
-  }
 }
 
-//TODO Print error details to console?
-/*
-function error(n) {
 
-}
-*/
+/***********************
+  Utility functions
+***********************/
+
+var $N = function(data, next, prev) {
+  return new Node(data, next, prev);
+};
+
+var $L = function() {
+  return new List();
+};
